@@ -13,16 +13,20 @@ import org.springframework.web.bind.MissingRequestValueException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayOutputStream;
-import org.springframework.http.HttpHeaders;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import org.springframework.http.HttpHeaders;
 
 @RestController
 public class QrCodeResource {
 
+    private final QrCodeService qrCodeService;
+
     @Autowired
-    private QrCodeService qrCodeService;
+    public QrCodeResource(QrCodeService qrCodeService) {
+        this.qrCodeService = qrCodeService;
+    }
 
     @PostMapping(path = "/api/qr/generate", produces = MediaType.IMAGE_JPEG_VALUE)
     public void generateQr(@RequestBody GenerateQrRequest request, HttpServletResponse response)
@@ -47,20 +51,15 @@ public class QrCodeResource {
             if (qrString == null || qrString.trim().isEmpty()) {
                 throw new MissingRequestValueException("QR String is required");
             }
-
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             qrCodeService.generateQr(qrString, outputStream);
-
             byte[] qrCodeBytes = outputStream.toByteArray();
-
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.IMAGE_JPEG);
-
             return new ResponseEntity<>(qrCodeBytes, headers, HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new byte[0]);
         }
     }
-
 }

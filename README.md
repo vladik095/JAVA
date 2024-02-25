@@ -1,76 +1,92 @@
-### QR Code Generation Project
+# Log Management
 
-This project provides a service for generating QR codes based on input data. It utilizes Spring Boot for backend functionality and provides an API for generating QR codes dynamically.
+This controller manages logs in the application.
 
----
+## Endpoints
 
-### Project Structure
+- **GET /api/logs**: Retrieve all logs. Can be filtered by author by passing the `author` parameter.
+- **GET /api/logs/{id}**: Retrieve a log by its identifier.
+- **POST /api/logs**: Create a new log. Data about the new log should be sent in the request body.
+- **PUT /api/logs/{id}**: Update an existing log. Data about the updated log should be sent in the request body.
+- **DELETE /api/logs/{id}**: Delete a log by its identifier.
+- **DELETE /api/logs**: Delete all logs.
+- **GET /api/logs/links**: Retrieve logs that are links.
+- **GET /api/log/searchByAuthor**: Search logs by author. Can pass the `author` parameter for searching.
 
-The project is structured as follows:
+## Database Description
 
-- **com.vladislav.app.rest.model**: Contains the model classes used in the application.
-  - `DecodedQrRequest.java`: Represents the request for decoding a QR code.
-  - `DecodedQrResponse.java`: Represents the response for decoding a QR code.
-  - `GenerateQrRequest.java`: Represents the request for generating a QR code.
+This application uses a PostgreSQL database. It contains a table named `logs` with the following fields:
 
-- **com.vladislav.app.rest.resource**: Contains the REST controllers for handling API endpoints.
-  - `QrCodeResource.java`: REST controller for generating and decoding QR codes.
+- `id`: Unique event identifier (type `long`).
+- `Author`: Event author (type `String`).
+- `QRdescription`: Description of the event for generating a QR code (type `String`).
+- `Link`: Flag indicating whether the event is a link (type `boolean`).
 
-- **com.vladislav.app.rest.service**: Contains the service classes responsible for business logic.
-  - `QrCodeService.java`: Service class responsible for generating and decoding QR codes.
-
-- **com.vladislav.app.rest**: Contains the main application class.
-  - `QrCodeGeneratorApplication.java`: Main class to run the Spring Boot application.
-
-- **resources**: Contains application properties and other resource files.
-
----
-
-### Dependencies
+## Dependencies
 
 - **Spring Boot**: For building the application.
 - **Spring Web**: For building RESTful APIs.
-- **ZXing**: A library for generating QR codes.
-- **Java Logging API**: For logging information.
+- **PostgreSQL Driver**: Driver for interacting with the PostgreSQL database.
+- **Java Persistence API (JPA)**: For working with object-relational mapping.
+- **Apache Maven**: For managing dependencies and building the project.
 
----
+## How to Run
 
-### How to Run the Project
-
-1. Clone the repository: 
+1. Clone the repository:
     ```
     git clone https://github.com/vladik095/JAVA.git
     ```
 
-2. Build the project: 
+2. Build the project:
     ```
     mvn clean install
     ```
 
-3. Run the application: 
+3. Run the application:
     ```
     mvn spring-boot:run
     ```
 
-4. The application will start, and you can access the API at `localhost:8080/api/qr/generate?qrString=your_information_for_qrcode`.
+4. The application will start, and you can access the API endpoints described above.
 
----
+## Usage Examples
 
-### Usage Examples
-
-- **Generate a QR code using URL**:
+- **Retrieve all logs**:
     ```
-    curl "http://localhost:8080/api/qr/generate?qrString=your_information_for_qrcode"
+    GET /api/logs
     ```
 
-- **Generate a QR code using JSON payload**:
+- **Retrieve a log by its identifier**:
     ```
-    curl -X POST -H "Content-Type: application/json" -d '{"qrString":"your_information_for_qrcode"}' http://localhost:8080/api/qr/generate
-    ```
-
-- **Decode information from a QR code**:
-    ```
-    curl -X POST -F "qrCode=@path/to/qr-code-image.png" http://localhost:8080/api/qr/decode
+    GET /api/logs/{id}
     ```
 
---- 
+- **Create a new log**:
+    ```
+    POST /api/logs
+    ```
+
+- **Update an existing log**:
+    ```
+    PUT /api/logs/{id}
+    ```
+
+- **Delete a log by its identifier**:
+    ```
+    DELETE /api/logs/{id}
+    ```
+
+- **Delete all logs**:
+    ```
+    DELETE /api/logs
+    ```
+
+- **Retrieve logs that are links**:
+    ```
+    GET /api/logs/links
+    ```
+
+- **Search logs by author**:
+    ```
+    GET /api/log/searchByAuthor?author={author}
+    ```
